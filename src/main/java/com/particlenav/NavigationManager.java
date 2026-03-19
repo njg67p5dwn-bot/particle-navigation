@@ -23,6 +23,7 @@ public class NavigationManager {
     private static final double RECALC_DISTANCE = 5.0;
 
     private BlockPos target;
+    private BlockPos markedPos;
     private List<PathNode> currentPath = new CopyOnWriteArrayList<>();
     private AStarPathfinder pathfinder;
     private final PathRenderer renderer = new PathRenderer();
@@ -211,6 +212,29 @@ public class NavigationManager {
         }
     }
 
+    public void markPosition() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) return;
+
+        markedPos = mc.player.blockPosition();
+        sendMessage(Component.literal("[Nav] ")
+                .withStyle(ChatFormatting.AQUA)
+                .append(Component.literal("위치 저장: " + markedPos.getX() + ", " + markedPos.getY() + ", " + markedPos.getZ())
+                        .withStyle(ChatFormatting.WHITE)));
+    }
+
+    public void navigateToMark() {
+        if (markedPos == null) {
+            sendMessage(Component.literal("[Nav] ")
+                    .withStyle(ChatFormatting.RED)
+                    .append(Component.literal("저장된 위치가 없습니다! /nav mark로 먼저 저장하세요.")
+                            .withStyle(ChatFormatting.WHITE)));
+            return;
+        }
+        setTarget(markedPos);
+    }
+
     public boolean isActive() { return active; }
     public BlockPos getTarget() { return target; }
+    public BlockPos getMarkedPos() { return markedPos; }
 }

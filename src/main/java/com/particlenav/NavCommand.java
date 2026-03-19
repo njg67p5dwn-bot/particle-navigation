@@ -33,6 +33,16 @@ public class NavCommand {
                                         NavigationManager.getInstance().stop();
                                         return 1;
                                     }))
+                            .then(ClientCommandManager.literal("mark")
+                                    .executes(ctx -> {
+                                        NavigationManager.getInstance().markPosition();
+                                        return 1;
+                                    }))
+                            .then(ClientCommandManager.literal("back")
+                                    .executes(ctx -> {
+                                        NavigationManager.getInstance().navigateToMark();
+                                        return 1;
+                                    }))
                             .then(ClientCommandManager.literal("info")
                                     .executes(ctx -> {
                                         NavigationManager mgr = NavigationManager.getInstance();
@@ -47,6 +57,13 @@ public class NavCommand {
                                             source.sendFeedback(
                                                     Component.literal("[Nav] 활성화된 네비게이션 없음")
                                                             .withStyle(ChatFormatting.GRAY));
+                                        }
+                                        if (mgr.getMarkedPos() != null) {
+                                            BlockPos m = mgr.getMarkedPos();
+                                            source.sendFeedback(
+                                                    Component.literal("[Nav] 저장된 위치: "
+                                                                    + m.getX() + ", " + m.getY() + ", " + m.getZ())
+                                                            .withStyle(ChatFormatting.AQUA));
                                         }
                                         return 1;
                                     }))
