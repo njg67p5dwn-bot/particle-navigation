@@ -1,0 +1,40 @@
+plugins {
+    id 'fabric-loom' version '1.13-SNAPSHOT'
+    id 'java'
+}
+
+version = '1.0.0'
+group = 'com.particlenav'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.layered() {
+        officialMojangMappings()
+    }
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    // Only include required Fabric API modules to avoid javadoc namespace issues
+    modImplementation fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
+    modImplementation fabricApi.module("fabric-command-api-v2", project.fabric_version)
+    modImplementation fabricApi.module("fabric-particles-v1", project.fabric_version)
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+processResources {
+    inputs.property "version", project.version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+    options.release = 21
+}

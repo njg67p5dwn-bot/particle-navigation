@@ -1,0 +1,21 @@
+{
+    "schemaVersion": 1,
+    "id": "particle-navigation",
+    "version": "${version}",
+    "name": "Particle Navigation",
+    "description": "3D pathfinding navigation with particle trail visualization",
+    "authors": ["User"],
+    "contact": {},
+    "license": "MIT",
+    "icon": "",
+    "environment": "client",
+    "entrypoints": {
+        "client": ["com.particlenav.ParticleNavClient"]
+    },
+    "depends": {
+        "fabricloader": ">=0.18.0",
+        "minecraft": "~1.21.11",
+        "java": ">=21",
+        "fabric-api": "*"
+    }
+}
