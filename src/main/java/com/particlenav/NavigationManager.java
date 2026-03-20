@@ -30,9 +30,36 @@ public class NavigationManager {
 
     private int recalcCooldown = 0;
     private boolean active = false;
+    private String currentWorldId = null;
 
     public static NavigationManager getInstance() {
         return INSTANCE;
+    }
+
+    public void onWorldJoin(String worldId) {
+        this.currentWorldId = worldId;
+        NavigationData.LoadedData data = NavigationData.load(worldId);
+        this.markedPos = data.markedPos();
+        if (data.target() != null) {
+            setTarget(data.target());
+        }
+        if (markedPos != null) {
+            ParticleNavClient.LOGGER.info("[ParticleNav] Loaded marked position: {}, {}, {}",
+                    markedPos.getX(), markedPos.getY(), markedPos.getZ());
+        }
+    }
+
+    public void onWorldLeave() {
+        saveData();
+        stop();
+        this.markedPos = null;
+        this.currentWorldId = null;
+    }
+
+    private void saveData() {
+        if (currentWorldId != null) {
+            NavigationData.save(currentWorldId, markedPos, target);
+        }
     }
 
     public void setTarget(BlockPos target) {
@@ -40,6 +67,8 @@ public class NavigationManager {
         this.active = true;
         this.currentPath.clear();
         startPathfinding();
+
+        saveData();
 
         sendMessage(Component.literal("[Nav] ")
                 .withStyle(ChatFormatting.GREEN)
@@ -217,6 +246,7 @@ public class NavigationManager {
         if (mc.player == null) return;
 
         markedPos = mc.player.blockPosition();
+        saveData();
         sendMessage(Component.literal("[Nav] ")
                 .withStyle(ChatFormatting.AQUA)
                 .append(Component.literal("위치 저장: " + markedPos.getX() + ", " + markedPos.getY() + ", " + markedPos.getZ())
